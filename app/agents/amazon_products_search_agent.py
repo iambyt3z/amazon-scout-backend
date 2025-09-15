@@ -204,9 +204,7 @@ async def search_products(search_products_input: SearchProductsInput) -> SearchP
             product_asin = point.payload.get("asin", "N/A")
             product_asin_array.append(product_asin)
 
-        return SearchProductsOutput(
-            product_asin_array=product_asin_array
-        )
+        return SearchProductsOutput(product_asin_array=product_asin_array)
 
     except Exception as e:
         logger.exception(e)
