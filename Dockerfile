@@ -1,14 +1,13 @@
 # Use official Python runtime as a parent image
-FROM python:3.13.3-alpine
+FROM python:3.13.3-slim
 
 # Install build dependencies
-RUN apk add --no-cache \
+RUN apt-get update && apt-get install -y \
     gcc \
-    musl-dev \
+    g++ \
     libffi-dev \
-    openssl-dev \
-    python3-dev \
-    cargo
+    libssl-dev \
+    && rm -rf /var/lib/apt/lists/*
 
 # Set working directory in the container
 WORKDIR /app
