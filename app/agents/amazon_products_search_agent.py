@@ -1,4 +1,5 @@
 import logging
+import os
 import re
 
 import requests
@@ -6,6 +7,7 @@ from agents import Agent, ModelSettings, function_tool
 from bs4 import BeautifulSoup
 from dotenv import load_dotenv
 
+from app.classes.dense_search_client import DenseSearchClient
 from app.classes.hybrid_search_client import HybridSearchClient
 from app.models.amazon_products_search_agent import (
     AgentOutput,
@@ -17,7 +19,13 @@ from app.models.amazon_products_search_agent import (
 load_dotenv()
 
 logger = logging.getLogger(__name__)
-client = HybridSearchClient()
+hybrid_search_client = HybridSearchClient()
+
+dense_search_client = DenseSearchClient(
+    collection_name=os.getenv("QDRANT_COLLECTION", "hybrid-search2"),
+    ensure_schema=False,  # set True if you want the client to (re)create the collection schema
+    deterministic=False,
+)
 
 
 @function_tool
@@ -196,8 +204,9 @@ async def search_products(search_products_input: SearchProductsInput) -> SearchP
         category = search_products_input.product_category
 
         # filtered_results = client.hybrid_search(query, topk=25, filters={"category": category})
-        filtered_results = client.hybrid_search(query, topk=25)
+        # filtered_results = hybrid_search_client.hybrid_search(query, topk=25)
 
+        filtered_results = dense_search_client.search(query, topk=25, filters={})
         product_asin_array = []
 
         for i, point in enumerate(filtered_results.points, 1):
