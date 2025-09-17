@@ -205,8 +205,8 @@ async def search_products(search_products_input: SearchProductsInput) -> SearchP
 
         # filtered_results = client.hybrid_search(query, topk=25, filters={"category": category})
         # filtered_results = hybrid_search_client.hybrid_search(query, topk=25)
-
         filtered_results = dense_search_client.search(query, topk=25, filters={})
+
         product_asin_array = []
 
         for i, point in enumerate(filtered_results.points, 1):
